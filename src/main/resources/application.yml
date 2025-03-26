@@ -3,7 +3,6 @@ server:
   servlet:
     context-path: "/vngo"
 spring:
-  # profiles:
   datasource:
     url: ${DB_URL}
     driverClassName: "com.mysql.cj.jdbc.Driver"
