@@ -9,8 +9,17 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: vngo
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,10 +32,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # Chạy Unit Test với profile dev
       - name: Run Unit Tests
         run: |
           chmod +x ./mvnw
-          ./mvnw test
+          ./mvnw test -Pdev
 
       - name: Build with Maven
         run: |
@@ -44,7 +54,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
 
   deploy:
-    needs: build
+    needs: build-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Server
@@ -59,7 +69,6 @@ jobs:
             docker rm myapp-container || true
 
             docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-            
             docker run -d --name myapp-container \
               -p 8080:8080 \
               -e SERVER_PORT=8080 \
@@ -68,5 +77,5 @@ jobs:
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e JWT_SIGNER_KEY=${{ secrets.JWT_SIGNER_KEY }} \
               ${{ secrets.DOCKER_USERNAME }}/myapp:latest
-
+              
             docker image prune -f

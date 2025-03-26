@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/vngo
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+  jwt:
+    signerKey: ${JWT_SIGNER_KEY:dev_jwt_secret_key}

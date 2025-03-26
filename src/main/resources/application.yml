@@ -4,15 +4,15 @@ server:
     context-path: "/vngo"
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/vngo}
+    url: ${DB_URL}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: ${DB_USERNAME:root} 
-    password: ${DB_PASSWORD:123456}
+    username: ${DB_USERNAME} 
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 jwt:
-  signerKey: ${JWT_SIGNER_KEY:dev_jwt_secret_key}
+  signerKey: ${JWT_SIGNER_KEY}
   valid-duration: "3600"
   refreshable-duration: "86400"
